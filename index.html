@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArbitrageX — L99 PRO v2</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><i class="ti ti-trending-up"></i></div>
+    <div>
+      <div class="logo-name">ArbitrageX</div>
+      <div class="logo-tag">L99 PRO v2</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <button class="nav-item active" data-tab="dashboard"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></button>
+    <button class="nav-item" data-tab="scanner"><i class="ti ti-radar"></i><span>Scanner</span></button>
+    <button class="nav-item" data-tab="tendances"><i class="ti ti-trending-up"></i><span>Tendances</span></button>
+    <button class="nav-item" data-tab="viral"><i class="ti ti-flame"></i><span>Viral & Spy</span></button>
+    <button class="nav-item" data-tab="csv"><i class="ti ti-file-spreadsheet"></i><span>Import CSV</span></button>
+    <button class="nav-item" data-tab="comparateur"><i class="ti ti-layout-columns"></i><span>Comparateur</span></button>
+    <button class="nav-item" data-tab="calculateur"><i class="ti ti-calculator"></i><span>Calculateur</span></button>
+    <button class="nav-item" data-tab="alertes"><i class="ti ti-bell"></i><span>Alertes prix</span></button>
+    <button class="nav-item" data-tab="historique"><i class="ti ti-history"></i><span>Historique</span></button>
+    <button class="nav-item" data-tab="api"><i class="ti ti-api"></i><span>API</span></button>
+    <button class="nav-item" data-tab="assistant"><i class="ti ti-message-circle"></i><span>Assistant IA</span></button>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="status-dot"></div>
+    <span>Connecté · Session active</span>
+  </div>
+</div>
+
+<main class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menuToggle"><i class="ti ti-menu-2"></i></button>
+      <div id="page-title">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-stat"><i class="ti ti-trending-up"></i> <span id="tb-opps">47</span> opportunités</div>
+      <div class="topbar-stat green"><i class="ti ti-coin"></i> Marge moy. <span id="tb-margin">36.4%</span></div>
+      <div class="notif-btn" id="notifBtn"><i class="ti ti-bell"></i><div class="notif-badge" id="notifBadge">3</div></div>
+      <div class="avatar">AX</div>
+    </div>
+  </header>
+
+  <!-- NOTIFICATION PANEL -->
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-header">
+    <span>Notifications</span>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button onclick="clearAllNotifs()" style="font-size:11px;background:none;border:none;cursor:pointer;color:var(--text3)">Tout effacer</button>
+      <button onclick="document.getElementById('notifPanel').classList.remove('open')"><i class="ti ti-x"></i></button>
+    </div>
+  </div>
+    <div class="notif-list" id="notifList"></div>
+  </div>
+
+  <div class="content">
+
+    <!-- ═══════════════ DASHBOARD ═══════════════ -->
+    <section id="tab-dashboard" class="tab-section active">
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="mc-icon teal"><i class="ti ti-database"></i></div><div class="mc-body"><div class="mc-label">Produits analysés</div><div class="mc-val" id="d-prods">1 847</div></div></div>
+        <div class="metric-card"><div class="mc-icon green"><i class="ti ti-coin"></i></div><div class="mc-body"><div class="mc-label">Marge moyenne</div><div class="mc-val green" id="d-margin">36.4%</div></div></div>
+        <div class="metric-card"><div class="mc-icon amber"><i class="ti ti-bolt"></i></div><div class="mc-body"><div class="mc-label">Opportunités actives</div><div class="mc-val amber" id="d-opps">47</div></div></div>
+        <div class="metric-card"><div class="mc-icon blue"><i class="ti ti-history"></i></div><div class="mc-body"><div class="mc-label">Scans aujourd'hui</div><div class="mc-val" id="d-scans">38</div></div></div>
+        <div class="metric-card"><div class="mc-icon red"><i class="ti ti-bell"></i></div><div class="mc-body"><div class="mc-label">Alertes actives</div><div class="mc-val red" id="d-alerts">12</div></div></div>
+        <div class="metric-card"><div class="mc-icon purple"><i class="ti ti-trending-up"></i></div><div class="mc-body"><div class="mc-label">ROI moyen</div><div class="mc-val purple">58.2%</div></div></div>
+      </div>
+      <div class="dash-grid">
+        <div class="card">
+          <div class="card-title"><i class="ti ti-star"></i>Top opportunités du jour</div>
+          <table class="tbl" id="dash-opps-table"></table>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="ti ti-chart-bar"></i>Marges par catégorie</div>
+          <div id="cat-bars"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-title"><i class="ti ti-clock"></i>Activité récente</div>
+        <div id="dash-history"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ SCANNER ═══════════════ -->
+    <section id="tab-scanner" class="tab-section">
+      <div class="card">
+        <div class="card-title"><i class="ti ti-scan"></i>Scanner multi-plateformes</div>
+        <div class="search-bar">
+          <input type="text" id="scan-q" placeholder="Nom du produit, EAN, ASIN, URL..." class="search-input" />
+          <select id="scan-src" class="sel">
+            <option value="">Toutes sources</option>
+            <optgroup label="── Marketplaces ──">
+            <option value="amazon">Amazon DE / ES / IT</option>
+            <option value="ebay">eBay</option>
+            <option value="vinted">Vinted</option>
+            <option value="leboncoin">Leboncoin</option>
+            <option value="aliexpress">AliExpress</option>
+            <option value="cdiscount">Cdiscount</option>
+            <option value="fnac">Fnac</option>
+            <option value="backmarket">Backmarket</option>
+            </optgroup>
+            <optgroup label="── Dropshipping ──">
+            <option value="cjdropshipping">CJDropshipping</option>
+            <option value="dsers">DSers / AliExpress</option>
+            <option value="spocket">Spocket</option>
+            <option value="zendrop">Zendrop</option>
+            <option value="dropmagic">Dropmagic</option>
+            <option value="bigbuy">BigBuy (EU)</option>
+            <option value="syncee">Syncee</option>
+            <option value="wiio">Wiio</option>
+            </optgroup>
+            <optgroup label="── Grossistes ──">
+            <option value="dhgate">DHgate</option>
+            <option value="alibaba">Alibaba</option>
+            <option value="temu">Temu</option>
+            </optgroup>
+          </select>
+          <select id="scan-tgt" class="sel">
+            <option value="">Toutes cibles</option>
+            <optgroup label="── Votre boutique ──">
+            <option value="shopify">Shopify (votre boutique)</option>
+            </optgroup>
+            <optgroup label="── Marketplaces revente ──">
+            <option value="amazon fba">Amazon FBA FR</option>
+            <option value="ebay fr">eBay FR</option>
+            <option value="vinted">Vinted</option>
+            <option value="etsy">Etsy</option>
+            <option value="rakuten">Rakuten</option>
+            <option value="vestiaire">Vestiaire Collective</option>
+            <option value="leboncoin">Leboncoin</option>
+            <option value="fnac">Fnac Marketplace</option>
+            <option value="cdiscount">Cdiscount</option>
+            </optgroup>
+            <optgroup label="── Dropshipping ──">
+            <option value="cjdropshipping">CJDropshipping</option>
+            <option value="dsers">DSers / AliExpress DS</option>
+            <option value="spocket">Spocket</option>
+            <option value="zendrop">Zendrop</option>
+            <option value="dropmagic">Dropmagic</option>
+            </optgroup>
+            <optgroup label="── Luxe / Niche ──">
+            <option value="chrono24">Chrono24 (montres)</option>
+            <option value="vestiaire">Vestiaire Collective</option>
+            <option value="catawiki">Catawiki</option>
+            </optgroup>
+          </select>
+          <select id="scan-cat" class="sel">
+            <option value="">Toutes catégories</option>
+            <option value="électronique">Électronique</option>
+            <option value="mode">Mode</option>
+            <option value="jouets">Jouets</option>
+            <option value="maison">Maison</option>
+            <option value="beauté">Beauté</option>
+            <option value="jeux vidéo">Jeux vidéo</option>
+            <option value="montres">Montres</option>
+            <option value="bien-être">Bien-être & Sommeil</option>
+            <option value="pêche">Pêche</option>
+          </select>
+          <button class="btn-primary" onclick="doScan()"><i class="ti ti-search"></i> Scanner</button>
+        </div>
+        <div class="filter-chips" id="scan-chips">
+          <button class="chip active" onclick="setScanFilter(this,'all')">Tout</button>
+          <button class="chip" onclick="setScanFilter(this,'high')">Marge &gt; 35%</button>
+          <button class="chip" onclick="setScanFilter(this,'med')">Marge 20–35%</button>
+          <button class="chip" onclick="setScanFilter(this,'low')">Marge &lt; 20%</button>
+        </div>
+      </div>
+      <div id="scan-results"></div>
+    </section>
+
+    <!-- ═══════════════ IMPORT CSV ═══════════════ -->
+    <section id="tab-csv" class="tab-section">
+      <div class="card">
+        <div class="card-title"><i class="ti ti-upload"></i>Import CSV / Excel</div>
+        <div id="csv-toast" class="toast hidden"></div>
+        <div class="upload-zone" id="dropzone" onclick="document.getElementById('csv-file').click()">
+          <i class="ti ti-file-spreadsheet" style="font-size:40px;color:#00a882;margin-bottom:10px"></i>
+          <div class="upload-title">Glissez votre fichier CSV ici</div>
+          <div class="upload-sub">ou <strong>cliquez pour parcourir</strong> · .csv, .txt acceptés</div>
+          <div class="upload-hint">Colonnes : nom · prix_achat · prix_vente · plateforme_source · plateforme_cible · frais_port · commission</div>
+        </div>
+        <input type="file" id="csv-file" accept=".csv,.txt" style="display:none" onchange="loadCSV(event)" />
+        <div id="csv-preview"></div>
+        <div id="csv-table"></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="ti ti-download"></i>Modèle CSV à télécharger</div>
+        <pre class="code-block">nom,prix_achat,prix_vente,plateforme_source,plateforme_cible,frais_port_achat,frais_port_vente,commission
+AirPods Pro 2,189,249,Amazon DE,eBay FR,6,0,13
+Nike Air Max 90,55,110,Vinted,Etsy,8,5,5
+Lego 42115,120,180,Leboncoin,Amazon FBA,12,0,15
+Dior Sauvage 100ml,18,55,AliExpress,eBay,4,0,13</pre>
+        <button class="btn-outline" style="margin-top:10px" onclick="dlTemplate()"><i class="ti ti-download"></i> Télécharger modele.csv</button>
+      </div>
+    </section>
+
+    <!-- ═══════════════ COMPARATEUR ═══════════════ -->
+    <section id="tab-comparateur" class="tab-section">
+      <div class="card">
+        <div class="card-title"><i class="ti ti-layout-columns"></i>Comparateur multi-plateformes</div>
+        <div class="comp-inputs">
+          <div class="ibox"><label>Produit</label><input type="text" id="cp-prod" value="AirPods Pro 2" /></div>
+          <div class="ibox"><label>Prix d'achat (€)</label><input type="number" id="cp-buy" value="189" oninput="renderComp()" /></div>
+          <div class="ibox"><label>Frais de port achat (€)</label><input type="number" id="cp-ship" value="6" oninput="renderComp()" /></div>
+          <button class="btn-primary" onclick="renderComp()"><i class="ti ti-refresh"></i> Comparer</button>
+        </div>
+        <div id="comp-summary"></div>
+        <div class="comp-grid" id="comp-grid"></div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-title"><i class="ti ti-chart-bar"></i>Comparaison visuelle des profits</div>
+        <div id="comp-chart"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ CALCULATEUR ═══════════════ -->
+    <section id="tab-calculateur" class="tab-section">
+      <div class="calc-layout">
+        <div class="card">
+          <div class="card-title"><i class="ti ti-calculator"></i>Calculateur de rentabilité</div>
+          <div class="calc-grid">
+            <div class="ibox"><label>Prix d'achat (€)</label><input type="number" id="c-buy" value="25" oninput="calcMargin()" /></div>
+            <div class="ibox"><label>Prix de vente (€)</label><input type="number" id="c-sell" value="59" oninput="calcMargin()" /></div>
+            <div class="ibox"><label>Frais port achat (€)</label><input type="number" id="c-ship-in" value="3.5" oninput="calcMargin()" /></div>
+            <div class="ibox"><label>Frais port vente (€)</label><input type="number" id="c-ship-out" value="5" oninput="calcMargin()" /></div>
+            <div class="ibox"><label>Commission plateforme (%)</label><input type="number" id="c-fee" value="13" oninput="calcMargin()" /></div>
+            <div class="ibox"><label>TVA applicable (%)</label><input type="number" id="c-tva" value="0" oninput="calcMargin()" /></div>
+            <div class="ibox"><label>Frais emballage (€)</label><input type="number" id="c-pack" value="1" oninput="calcMargin()" /></div>
+            <div class="ibox"><label>Autres frais (€)</label><input type="number" id="c-other" value="0" oninput="calcMargin()" /></div>
+          </div>
+          <div class="calc-result" id="calc-result"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="ti ti-chart-pie"></i>Décomposition des coûts</div>
+          <div id="cost-breakdown"></div>
+          <div class="card-title" style="margin-top:1.5rem"><i class="ti ti-trending-up"></i>Seuil de rentabilité</div>
+          <div id="break-even"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ ALERTES ═══════════════ -->
+    <section id="tab-alertes" class="tab-section">
+      <div class="card">
+        <div class="card-title"><i class="ti ti-bell-plus"></i>Créer une alerte prix</div>
+        <div class="alert-form-grid">
+          <div class="ibox"><label>Produit</label><input type="text" id="al-prod" placeholder="Ex: Nike Air Max 270" /></div>
+          <div class="ibox"><label>Plateforme source</label>
+            <select id="al-plat"><option>Amazon</option><option>eBay</option><option>Vinted</option><option>Leboncoin</option><option>AliExpress</option><option>Fnac</option></select>
+          </div>
+          <div class="ibox"><label>Prix cible ≤ (€)</label><input type="number" id="al-price" placeholder="80" /></div>
+          <div class="ibox"><label>Marge minimale (%)</label><input type="number" id="al-margin-min" placeholder="30" /></div>
+          <div class="ibox"><label>Notifier par</label>
+            <select id="al-notif"><option>Email</option><option>Webhook</option><option>SMS</option><option>Telegram</option></select>
+          </div>
+          <div class="ibox"><label>Fréquence de vérif.</label>
+            <select id="al-freq"><option>Toutes les heures</option><option>Toutes les 6h</option><option>1 fois/jour</option></select>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="addAlert()"><i class="ti ti-bell"></i> Activer l'alerte</button>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-title"><i class="ti ti-list"></i>Alertes actives <span id="alert-count" class="count-badge"></span></div>
+        <div class="filter-chips">
+          <button class="chip active" onclick="filterAlerts(this,'all')">Toutes</button>
+          <button class="chip" onclick="filterAlerts(this,'active')">Actives</button>
+          <button class="chip" onclick="filterAlerts(this,'warn')">Seuil proche</button>
+          <button class="chip" onclick="filterAlerts(this,'off')">Inactives</button>
+        </div>
+        <div id="alerts-list"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ HISTORIQUE ═══════════════ -->
+    <section id="tab-historique" class="tab-section">
+      <div class="card">
+        <div class="card-title"><i class="ti ti-history"></i>Historique des actions</div>
+        <div class="histo-toolbar">
+          <div class="filter-chips" id="histo-chips">
+            <button class="chip active" onclick="filterHisto(this,'all')">Tout</button>
+            <button class="chip" onclick="filterHisto(this,'scan')">Scans</button>
+            <button class="chip" onclick="filterHisto(this,'csv')">Import CSV</button>
+            <button class="chip" onclick="filterHisto(this,'comp')">Comparaisons</button>
+            <button class="chip" onclick="filterHisto(this,'alert')">Alertes</button>
+            <button class="chip" onclick="filterHisto(this,'calc')">Calculs</button>
+          </div>
+          <button class="btn-outline" onclick="exportHistory()"><i class="ti ti-download"></i> Exporter</button>
+        </div>
+        <div id="histo-list"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ API ═══════════════ -->
+    <section id="tab-api" class="tab-section">
+      <div class="card">
+        <div class="card-title"><i class="ti ti-key"></i>Votre clé API <span class="badge-new">REST</span></div>
+        <div class="api-key-row">
+          <input type="password" id="api-key-field" value="axl99-sk-2f9a1b4c8d3e7f0a2b5c" readonly class="api-key-input" />
+          <button class="btn-outline" onclick="toggleKey()"><i class="ti ti-eye"></i></button>
+          <button class="btn-outline" onclick="copyKey()"><i class="ti ti-copy"></i> Copier</button>
+          <button class="btn-outline" onclick="regenKey()"><i class="ti ti-refresh"></i> Régénérer</button>
+        </div>
+        <div id="key-toast" class="toast hidden" style="margin-top:8px"></div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-title"><i class="ti ti-route"></i>Endpoints disponibles</div>
+        <div id="endpoints-list"></div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-title"><i class="ti ti-player-play"></i>Testeur en direct</div>
+        <div class="api-tester-row">
+          <select id="ep-method" class="sel"><option>GET</option><option>POST</option></select>
+          <select id="ep-sel" class="sel" onchange="updatePreview()">
+            <option value="scan">GET /v1/scan</option>
+            <option value="products">GET /v1/products</option>
+            <option value="calculate">POST /v1/calculate</option>
+            <option value="alerts">GET /v1/alerts</option>
+            <option value="history">GET /v1/history</option>
+          </select>
+          <input type="text" id="ep-param" placeholder="q=airpods&min_margin=30" class="search-input" oninput="updatePreview()" />
+          <button class="btn-primary" onclick="testApi()"><i class="ti ti-player-play"></i> Exécuter</button>
+        </div>
+        <pre class="code-block" id="ep-preview"></pre>
+        <div id="ep-response" class="api-response hidden"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ ASSISTANT IA ═══════════════ -->
+    <section id="tab-assistant" class="tab-section">
+      <div class="chat-layout">
+        <div class="card chat-card">
+          <div class="card-title"><i class="ti ti-sparkles"></i>Assistant ArbitrageX IA</div>
+          <div class="chat-messages" id="chat-messages">
+            <div class="chat-bubble ai">
+              <div class="bubble-tag"><i class="ti ti-sparkles"></i> Assistant ArbitrageX</div>
+              Bonjour ! Je suis votre assistant d'arbitrage intégré. Je peux vous aider à analyser des niches, calculer vos marges, comparer des plateformes, identifier des risques ou interpréter vos données. Comment puis-je vous aider ?
+            </div>
+          </div>
+          <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Posez votre question..." onkeydown="if(event.key==='Enter')sendChat()" />
+            <button class="btn-primary" onclick="sendChat()"><i class="ti ti-send"></i></button>
+          </div>
+        </div>
+        <div class="chat-sidebar">
+          <div class="card">
+            <div class="card-title"><i class="ti ti-bolt"></i>Questions rapides</div>
+            <div class="quick-qs" id="quick-qs"></div>
+          </div>
+          <div class="card" style="margin-top:10px">
+            <div class="card-title"><i class="ti ti-book"></i>Guides</div>
+            <div class="guide-list">
+              <div class="guide-item" onclick="sendChatMsg('Comment débuter en arbitrage avec 500€ ?')"><i class="ti ti-arrow-right"></i>Débuter avec 500€</div>
+              <div class="guide-item" onclick="sendChatMsg('Quels sont les meilleurs outils complémentaires à ArbitrageX ?')"><i class="ti ti-arrow-right"></i>Outils complémentaires</div>
+              <div class="guide-item" onclick="sendChatMsg('Comment éviter les suspensions de compte vendeur ?')"><i class="ti ti-arrow-right"></i>Éviter les suspensions</div>
+              <div class="guide-item" onclick="sendChatMsg('Quelle structure juridique pour un vendeur arbitrage ?')"><i class="ti ti-arrow-right"></i>Structure juridique</div>
+              <div class="guide-item" onclick="sendChatMsg('Comment scaler de 1000€ à 10 000€ par mois ?')"><i class="ti ti-arrow-right"></i>Scaler son activité</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════ TENDANCES ═══════════════ -->
+    <section id="tab-tendances" class="tab-section">
+      <div class="metrics-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="metric-card"><div class="mc-icon teal"><i class="ti ti-flame"></i></div><div class="mc-body"><div class="mc-label">Produits en hausse</div><div class="mc-val" id="tr-up">24</div></div></div>
+        <div class="metric-card"><div class="mc-icon amber"><i class="ti ti-trending-up"></i></div><div class="mc-body"><div class="mc-label">Score tendance max</div><div class="mc-val amber" id="tr-score">94/100</div></div></div>
+        <div class="metric-card"><div class="mc-icon green"><i class="ti ti-eye"></i></div><div class="mc-body"><div class="mc-label">Vues/24h (eBay)</div><div class="mc-val green">+18k</div></div></div>
+        <div class="metric-card"><div class="mc-icon blue"><i class="ti ti-refresh"></i></div><div class="mc-body"><div class="mc-label">Dernière MàJ</div><div class="mc-val" style="font-size:14px" id="tr-update"></div></div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:12px;margin-top:12px">
+        <div class="card">
+          <div class="card-title"><i class="ti ti-flame"></i>Produits tendance maintenant <span style="font-size:11px;color:var(--color-text-secondary);margin-left:6px;font-weight:400">Score = popularité × marge × vitesse de hausse</span></div>
+          <div class="filter-chips" id="trend-cats">
+            <button class="chip active" onclick="filterTrends(this,'all')">Tout</button>
+            <button class="chip" onclick="filterTrends(this,'électronique')">Électronique</button>
+            <button class="chip" onclick="filterTrends(this,'mode')">Mode</button>
+            <button class="chip" onclick="filterTrends(this,'montres')">Montres</button>
+            <button class="chip" onclick="filterTrends(this,'maison')">Maison</button>
+            <button class="chip" onclick="filterTrends(this,'jouets')">Jouets</button>
+            <button class="chip" onclick="filterTrends(this,'pêche')">Pêche</button>
+            <button class="chip" onclick="filterTrends(this,'bien-être')">Bien-être</button>
+          </div>
+          <div id="trend-list"></div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:12px">
+            <div class="card-title"><i class="ti ti-chart-line"></i>Évolution 30 jours</div>
+            <div id="trend-chart" style="padding:8px 0"></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="ti ti-bulb"></i>Niches émergentes</div>
+            <div id="niches-list"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ VIRAL & SPY ═══════════════ -->
+    <section id="tab-viral" class="tab-section">
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title"><i class="ti ti-flame"></i>Produits viraux & Bestsellers — Accès direct fournisseurs
+          <span style="font-size:11px;color:var(--color-text-secondary);margin-left:8px;font-weight:400">Cliquez sur un fournisseur pour voir ses produits les plus vendus en ce moment</span>
+        </div>
+        <div id="viral-grid"></div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title"><i class="ti ti-spy"></i>Spy Concurrents — Boutiques Shopify qui cartonnent</div>
+        <div id="spy-grid"></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="ti ti-chart-bar"></i>Tendances réseaux sociaux — Produits viraux TikTok & Instagram</div>
+        <div id="social-grid"></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div class="overlay" id="overlay"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
